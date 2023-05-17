@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Survey Form</title>
+</head>
+<body>
+  <h1>Survey Form</h1>
+  <form id="survey-form" action="/submit" method="POST">
+    <label for="q1">Question 1: What is your name?</label><br>
+    <input type="text" id="q1" name="q1" required minlength="3" maxlength="50"><br>
+
+    <label for="q2">Question 2: What is your email address?</label><br>
+    <input type="email" id="q2" name="q2" required><br>
+
+    <label for="q3">Question 3: How did you hear about us?</label><br>
+    <select id="q3" name="q3" required>
+      <option value="">Please select an option</option>
+      <option value="Google">Google</option>
+      <option value="Facebook">Facebook</option>
+      <option value="Twitter">Twitter</option>
+      <option value="Friend">Friend</option>
+      <option value="Other">Other</option>
+    </select><br>
+
+    <label for="q4">Question 4: What do you think about our service?</label><br>
+    <textarea id="q4" name="q4" required minlength="10"></textarea><br>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    const form = document.querySelector('#survey-form');
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const formData = new FormData(event.target);
+      const data = {};
+      for (let [key, value] of formData.entries()) {
+        data[key] = value;
+      }
+      const response = await fetch('/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+      if (response.ok) {
+        alert('Thank you for your response!');
+        form.reset();
+      } else {
+        alert('Failed to submit the form. Please try again later.');
+      }
+    });
+
+    // add validation
+    const q1 = document.querySelector('#q1');
+    q1.addEventListener('input', () => {
+      if (q1.validity.patternMismatch) {
+        q1.setCustomValidity('Please enter a valid name');
+      } else {
+        q1.setCustomValidity('');
+      }
+    });
+
+    const q2 = document.querySelector('#q2');
+    q2.addEventListener('input', () => {
+      if (q2.validity.patternMismatch) {
+        q2.setCustomValidity('Please enter a valid email address');
+      } else {
+        q2.setCustomValidity('');
+      }
+    });
+
+    const q4 = document.querySelector('#q4');
+    q4.addEventListener('input', () => {
+      if (q4.validity.patternMismatch) {
+        q4.setCustomValidity('Please enter at least 10 characters');
+      } else {
+        q4.setCustomValidity('');
+      }
+    });
+  </script>
+</body>
+</html>
